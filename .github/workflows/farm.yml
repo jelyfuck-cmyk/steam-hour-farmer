@@ -1,4 +1,4 @@
-name: Steam Hour Farmer (ASF)
+name: Steam Hour Farmer
 
 on:
   workflow_dispatch:
@@ -9,30 +9,28 @@ on:
         default: ''
 
 jobs:
-  run-asf:
+  run-farmer:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup ASF
-        env:
-          STEAM_LOGIN: ${{ secrets.ACCOUNT_NAME }}
-          STEAM_PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          mkdir asf && cd asf
-          wget https://github.com
-          unzip ASF-linux-x64.zip
-          chmod +x ArchiSteamFarm
-          
-          # Безопасно создаем конфиг без подстановки багнутых символов напрямую
-          echo "{\"SteamLogin\": \"$STEAM_LOGIN\", \"SteamPassword\": \"$STEAM_PASSWORD\", \"Enabled\": true, \"GamesPlayed\": [730,521890,242760,1321680,620,268910,3257000,286690,570,578080]}" > config/bot.json
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Run ASF
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Farmer
         run: |
-          cd asf
           if [ ! -z "${{ github.event.inputs.steam_guard }}" ]; then
-            ./ArchiSteamFarm --input "input bot 2FA ${{ github.event.inputs.steam_guard }}"
+            node index.js --code="${{ github.event.inputs.steam_guard }}"
           else
-            ./ArchiSteamFarm
+            node index.js
           fi
+        env:
+          ACCOUNT_NAME: ${{ secrets.ACCOUNT_NAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          GAMES: ${{ secrets.GAMES }}
