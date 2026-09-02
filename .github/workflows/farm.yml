@@ -22,8 +22,8 @@ jobs:
           unzip ASF-linux-x64.zip
           chmod +x ArchiSteamFarm
           
-          # Создаем файл конфигурации бота с твоими играми
-          cat <<EOF > config/bot.json
+          # Создаем рабочий конфиг для ASF
+          cat <<'EOF' > config/bot.json
           {
             "SteamLogin": "${{ secrets.ACCOUNT_NAME }}",
             "SteamPassword": "${{ secrets.PASSWORD }}",
@@ -36,7 +36,7 @@ jobs:
         run: |
           cd asf
           if [ ! -z "${{ github.event.inputs.steam_guard }}" ]; then
-            ./ArchiSteamFarm --input "--asf-cli botmybot input ${{ github.event.inputs.steam_guard }}"
+            ./ArchiSteamFarm --input "input botmybot 2FA ${{ github.event.inputs.steam_guard }}"
           else
             ./ArchiSteamFarm
           fi
