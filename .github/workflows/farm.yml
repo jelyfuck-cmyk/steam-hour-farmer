@@ -1,26 +1,42 @@
-name: Steam Hour Farmer
+name: Steam Hour Farmer (ASF)
 
 on:
   workflow_dispatch:
+    inputs:
+      steam_guard:
+        description: 'Сюда пиши код Steam Guard'
+        required: false
+        default: ''
 
 jobs:
-  run-farmer:
+  run-asf:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Farmer
+      - name: Setup ASF
         run: |
-          export ACCOUNT_NAME="${{ secrets.ACCOUNT_NAME }}"
-          export PASSWORD="${{ secrets.PASSWORD }}"
-          export GAMES="${{ secrets.GAMES }}"
-          node index.js
+          mkdir asf && cd asf
+          wget https://github.com
+          unzip ASF-linux-x64.zip
+          chmod +x ArchiSteamFarm
+          
+          # Создаем файл конфигурации бота с твоими играми
+          cat <<EOF > config/bot.json
+          {
+            "SteamLogin": "${{ secrets.ACCOUNT_NAME }}",
+            "SteamPassword": "${{ secrets.PASSWORD }}",
+            "Enabled": true,
+            "GamesPlayed": [730, 521890, 242760, 1321680, 620, 268910, 3257000, 286690, 570, 578080]
+          }
+          EOF
+
+      - name: Run ASF
+        run: |
+          cd asf
+          if [ ! -z "${{ github.event.inputs.steam_guard }}" ]; then
+            ./ArchiSteamFarm --input "${{ github.event.inputs.steam_guard }}"
+          else
+            ./ArchiSteamFarm
+          fi
