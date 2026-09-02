@@ -1,0 +1,27 @@
+.github/workflows/farm.yml
+name: Steam Hour Farmer
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-farmer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Farmer
+        run: node index.js
+        env:
+          STEAM_ACCOUNT_NAME: ${{ secrets.STEAM_ACCOUNT_NAME }}
+          STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+          STEAM_GAMES: ${{ secrets.STEAM_GAMES }}
