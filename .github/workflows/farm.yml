@@ -36,7 +36,7 @@ jobs:
         run: |
           cd asf
           if [ ! -z "${{ github.event.inputs.steam_guard }}" ]; then
-            ./ArchiSteamFarm --input "${{ github.event.inputs.steam_guard }}"
+            ./ArchiSteamFarm --input "--asf-cli botmybot input ${{ github.event.inputs.steam_guard }}"
           else
             ./ArchiSteamFarm
           fi
