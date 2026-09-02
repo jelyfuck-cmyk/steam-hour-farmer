@@ -1,4 +1,3 @@
-.github/workflows/farm.yml
 name: Steam Hour Farmer
 
 on:
