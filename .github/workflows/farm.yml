@@ -2,6 +2,11 @@ name: Steam Hour Farmer
 
 on:
   workflow_dispatch:
+    inputs:
+      steam_guard:
+        description: 'Введите код Steam Guard (если не нужен, оставьте пустым)'
+        required: false
+        default: ''
 
 jobs:
   run-farmer:
@@ -23,4 +28,9 @@ jobs:
           export ACCOUNT_NAME="${{ secrets.ACCOUNT_NAME }}"
           export PASSWORD="${{ secrets.PASSWORD }}"
           export GAMES="${{ secrets.GAMES }}"
-          node index.js
+          
+          if [ ! -z "${{ github.event.inputs.steam_guard }}" ]; then
+            node index.js --code="${{ github.event.inputs.steam_guard }}"
+          else
+            node index.js
+          fi
